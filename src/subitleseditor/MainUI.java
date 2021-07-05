@@ -5,19 +5,10 @@
  */
 package subitleseditor;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -179,12 +170,6 @@ public class MainUI extends javax.swing.JFrame implements Notifier{
 
         jLabel7.setText("To");
 
-        textToSub.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textToSubActionPerformed(evt);
-            }
-        });
-
         statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         statusLabel.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
 
@@ -227,7 +212,7 @@ public class MainUI extends javax.swing.JFrame implements Notifier{
 
         menuFile.setText("File");
 
-        menuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuItemOpen.setText("Open");
         menuItemOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -236,7 +221,7 @@ public class MainUI extends javax.swing.JFrame implements Notifier{
         });
         menuFile.add(menuItemOpen);
 
-        menuItemSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuItemSave.setText("Save");
         menuItemSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -245,7 +230,7 @@ public class MainUI extends javax.swing.JFrame implements Notifier{
         });
         menuFile.add(menuItemSave);
 
-        menuItemExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        menuItemExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuItemExit.setText("Exit");
         menuItemExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -415,10 +400,12 @@ public class MainUI extends javax.swing.JFrame implements Notifier{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    @Override
     public void notifyAction(String action){
         statusLabel.setText(action);
     }
     
+    @Override
     public void severeNotifyAction(String message){
         JOptionPane.showMessageDialog(this, message);
     }
@@ -445,6 +432,7 @@ public class MainUI extends javax.swing.JFrame implements Notifier{
             notifyAction("File loading canceled");
         }
     }
+    
     private void bLoadFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLoadFileActionPerformed
 
         loadFile();
@@ -564,10 +552,6 @@ public class MainUI extends javax.swing.JFrame implements Notifier{
 
         updateSubs(false);
     }//GEN-LAST:event_bAdvanceActionPerformed
-
-    private void textToSubActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textToSubActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textToSubActionPerformed
     
     private void bDynamicAdvanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDynamicAdvanceActionPerformed
         updateSubsDynamic(false);

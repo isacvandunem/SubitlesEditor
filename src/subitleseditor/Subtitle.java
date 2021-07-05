@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package subitleseditor;
 
 /**
@@ -15,16 +10,25 @@ public class Subtitle {
     public long end; //end of the subtitles in milliseconds
     public String text;  
     
+    /**
+     * Gets a String representation of this class with all relevant info
+     * @return A String representation of this class
+     */
     @Override
     public String toString(){
         return "" + number + "\n" + formatTime(start) + " --> " + formatTime(end) + "\n" + text + "\n\n";
     }
     
-    public static String formatTime(long t){
-        int millis = (int) (t%1000);
-        long seconds = t/1000;
-        long minutes = seconds/60;
-        int hours = (int)minutes/60;
+    /**
+     * Formats a time in long to a visual format
+     * @param time The time to be formatted
+     * @return A time formatted as hh:mm:ss,SSS
+     */
+    public static String formatTime(long time){
+        int millis = (int)(time % 1000);
+        long seconds = time / 1000;
+        long minutes = seconds / 60;
+        int hours = (int)(minutes / 60);
 
         if (seconds >= 60){
             seconds = seconds % 60;
@@ -42,8 +46,14 @@ public class Subtitle {
         return textHours + ":" + textMinutes + ":" + textSeconds + "," + textMillis;
     }
     
-    public static String padLeftZeros(String inputStr, int places){
-        while (inputStr.length() < places){
+    /**
+     * Pads a String with a certain amount of zeros to the left
+     * @param inputStr The input string
+     * @param zeros The amount of zeros to insert
+     * @return The padded string
+     */
+    public static String padLeftZeros(String inputStr, int zeros){
+        while (inputStr.length() < zeros){
             inputStr = "0" + inputStr;
         }
         
@@ -67,6 +77,10 @@ public class Subtitle {
         end += milliseconds;
     }
     
+    /**
+     * Updates the current class times based on the received param
+     * @param tuv The values to be applied in the class
+     */
     public void updateTimes(TimeUpdateValues tuv){
         updateTimes(tuv.getMinutes(), tuv.getSeconds(), tuv.getMilliseconds());
     }
@@ -95,12 +109,17 @@ public class Subtitle {
      * Parses a String time in the format hh:mm:ss,uuu --> hh:mm:ss,uuu
      * Where u represents the milliseconds of the subtitle.
      * The parsed result will be stored as milliseconds in the end time
-     * @param inputTime Fromatted String that represents the ending time
+     * @param inputTime Formatted String that represents the ending time
      */
     public void parseEndTime(String inputTime){
         end = parseTime(inputTime);
     }
     
+    /**
+     * Parses the time received in string to this classes values
+     * @param inputTime
+     * @return 
+     */
     private long parseTime(String inputTime){
         String[] blocks = inputTime.split(":");
         
@@ -122,11 +141,6 @@ public class Subtitle {
      * @param newText The new line of text to be added to this subtitle
      */
     public void addText(String newText){
-        if (text == null){
-            text = newText;
-        }
-        else {
-            text += "\n" + newText;    
-        }
+        text = text == null ? newText : "\n" + newText;
     }
 }

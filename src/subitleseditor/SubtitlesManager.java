@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package subitleseditor;
 
 import java.io.BufferedReader;
@@ -25,21 +20,20 @@ import java.util.logging.Logger;
  * @author isacv
  */
 public class SubtitlesManager {
-    private List<Subtitle> subtitles;
-    private List<Notifier> notifiers;
-    
+    private final List<Subtitle> subtitles;
+    private final List<Notifier> notifiers;    
     private String filePath;
     private String encoding;
     
     public SubtitlesManager(){
-        subtitles = new ArrayList<Subtitle>();
-        notifiers = new ArrayList<Notifier>();
+        subtitles = new ArrayList<>();
+        notifiers = new ArrayList<>();
     }
     
     /**
      * Adds a new notifier to this class's notifiers list. All the notifiers get notified for each 
      * generated action. There are 2 types of notifications: Soft and Hard, that allow the
-     * notifitiees to give different implementations for both if they deem necessary.
+     * notified ones to give different implementations for both if they deem necessary.
      * @param n The notifier to be added to the list
      */
     public void addNotifier(Notifier n){
@@ -48,31 +42,41 @@ public class SubtitlesManager {
         }
     }
     
+    /**
+     * Sets the file path
+     * @param newFilePath The new file path 
+     */
     public void setFilePath(String newFilePath){
         filePath = newFilePath;
     }
     
+    /**
+     * Gets the file path
+     * @return The current file path
+     */
     public String getFilePath(){
         return filePath;
     }
     
     /**
-     * Sets the current subtitle manager encoding. This encoding will only be used on the next file action (load/save).
-     * More often than not it is advisable to load from file again so that the load is already done with the correct encoding.
+     * Sets the current subtitle manager encoding. 
+     * This encoding will only be used on the next file action (load/save).
+     * More often than not it is advisable to load from file again so that the load 
+     * is already done with the correct encoding.
      * @param newEncoding New Encoding to be used as a String
      */
     public void setEncoding(String newEncoding){
         encoding = newEncoding;
     }
     
+    /**
+     * Writes the current subtitles to file if there is a file path selected
+     */
     public void writeToFile(){
         if (filePath != null){
-            try {
-                //PrintWriter pw = new PrintWriter(filePath); //writer to file without considering the encoding
-                PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(filePath), encoding));
-                
+            try(PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(filePath), encoding))) {
                 for (Subtitle s : subtitles){
-                    pw.print(s.toString());
+                    pw.print(s);
                 }
                 
                 pw.flush();
@@ -84,14 +88,13 @@ public class SubtitlesManager {
             } catch (UnsupportedEncodingException ex) {
                 Logger.getLogger(SubtitlesManager.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
         }else {
             notifyAction("No file selected, unable to save");
         }
     }
     
     /**
-     * A soft notification to all registered notifiees
+     * A soft notification to all registered notified parties
      * @param message the notification message
      */
     private void notifyAction(String message){
@@ -101,7 +104,7 @@ public class SubtitlesManager {
     }
     
     /**
-     * A hard notification to all registered notifiees
+     * A hard notification to all registered notified parties
      * @param message the notification message
      */
     private void severeNotifyAction(String message){
@@ -110,8 +113,13 @@ public class SubtitlesManager {
         }
     }
     
-    private ReadingType updateCurrentRead(ReadingType rt){
-        switch(rt){
+    /**
+     * Updates the current reading type according to a subtitle file structure
+     * @param readingType The reading type
+     * @return 
+     */
+    private ReadingType updateCurrentRead(ReadingType readingType){
+        switch(readingType){
             case number: return ReadingType.time;
             case time: return ReadingType.text;
             case text: return ReadingType.emptyline;
@@ -121,22 +129,19 @@ public class SubtitlesManager {
         return null;
     }
     
+    /**
+     * Reads a subtitle from the currently selected file path
+     */
     public void readFromFile(){
         ReadingType currRead = ReadingType.number;
-        
         BufferedReader br = null;
         
         try {
-            //br = new BufferedReader(new FileReader(new File(filePath))); //load without encoding
-            
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filePath)),encoding));
-
+            FileInputStream fileStream = new FileInputStream(new File(filePath));
+            br = new BufferedReader(new InputStreamReader(fileStream,encoding));
             notifyAction("Loading file...");
-
             String textLine = br.readLine();
-
             subtitles.clear();
-            
             Subtitle currentSubtitle = null;
 
             while (textLine != null){
@@ -244,7 +249,7 @@ public class SubtitlesManager {
     
     /**
      * Updates the subs based on the target subtitle. It rearranges the target subtitle to a specific time
-     * and readjusts all previous times proportionaly.
+     * and readjusts all previous times proportionally.
      * Positive values move the subtitle forward(later) whereas negative values move it backwards(earlier).
      * @param minutes minutes to advance/delay
      * @param seconds seconds to advance/delay
@@ -261,20 +266,19 @@ public class SubtitlesManager {
             return;
         }
         
-        long perSubChangeBackward = totalChange / subIndex; //sub index is the amount of elements - 1, which is what is neccessary for distributed update
-        
+        //sub index is the amount of elements - 1, which is what is neccessary for distributed update
+        long perSubChangeBackward = totalChange / subIndex;
         
         int change = totalChange;
         
         //makes the proportional adjustment for all the subtitles up to the selected subtitle
         for (int i = subIndex - 1; i >= 1; --i){ //update all subs backwards with the proportional change
-            
             subtitles.get(i).updateTimes(change);
             change -= perSubChangeBackward;
         }
         
-        //updates all the remaining forward subtitles so that they keep the same distance among themselves maintaining
-        //the same subtitle sync
+        //updates all the remaining forward subtitles so that they keep the same distance 
+        //among themselves maintaining the same subtitle sync
         for (int i = subIndex ; i < subtitles.size(); ++i){
             subtitles.get(i).updateTimes(totalChange);
         }
@@ -303,6 +307,11 @@ public class SubtitlesManager {
         notifyAction(notifyStr + " and remaining subtitles adjusted proportionally");
     }
     
+    /**
+     * Gets the subtitle referring the passed number
+     * @param subNumber The subtitle number
+     * @return The subtitle for the given number
+     */
     private Subtitle getSubtitle(int subNumber){
         for (Subtitle sub: subtitles){
             if (sub.number == subNumber){
@@ -313,6 +322,11 @@ public class SubtitlesManager {
         return null;
     }
     
+    /**
+     * Gets the subtitle index for a given subtitle number
+     * @param subNumber The subtitle number to get the index
+     * @return The index of the given subtitle
+     */
     private Integer getSubtitleIndex(int subNumber){
         for (int i = 0; i < subtitles.size(); ++i){
             Subtitle sub = subtitles.get(i);
@@ -339,6 +353,10 @@ public class SubtitlesManager {
         return sb.toString();
     }
     
+    /**
+     * Gets the first subtitle number
+     * @return The first subtitle number
+     */
     public int getFirstSubNumber(){
         if (subtitles != null){
             return subtitles.get(0).number;
@@ -347,6 +365,10 @@ public class SubtitlesManager {
         return 0;
     }
     
+    /**
+     * Gets the last subtitle number
+     * @return The last subtitle number
+     */
     public int getLastSubNumber(){
         if (subtitles != null || subtitles.size() >= 1){
             return subtitles.get(subtitles.size() - 1).number;

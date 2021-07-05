@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package subitleseditor;
 
 import java.awt.Dimension;
@@ -22,7 +17,10 @@ public class Main {
                     break;
                 }
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | 
+                InstantiationException | 
+                IllegalAccessException | 
+                javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -38,10 +36,12 @@ public class Main {
                 double screenwidth = screenSize.getWidth();
                 double screenheight = screenSize.getHeight();
 
-                uiwindow.setLocation((int)((screenwidth-uiwindow.getWidth())/2), (int)((screenheight-uiwindow.getHeight())/2));
+                uiwindow.setLocation(
+                        (int)((screenwidth-uiwindow.getWidth())/2), 
+                        (int)((screenheight-uiwindow.getHeight())/2)
+                );
                 uiwindow.setTitle("Subtitles Editor");
                 uiwindow.setVisible(true);
-                //new MainUI().setVisible(true);
             }
         });
     }

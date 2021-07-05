@@ -350,9 +350,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="textToSub">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textToSubActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="statusLabel">
       <Properties>
